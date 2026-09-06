@@ -1,0 +1,30 @@
+{
+  "name": "hospital-patient-and-appointment-management-system",
+  "version": "1.0.0",
+  "description": "Hospital patient and appointment management system built with Node.js, Express.js, MongoDB, and Mongoose.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node seed/seed.js",
+    "test": "node ./node_modules/jest/bin/jest.js --runInBand --forceExit --detectOpenHandles",
+    "verify": "node scripts/verify-api.js"
+  },
+  "keywords": ["hospital", "patient", "appointment", "management", "express", "mongodb"],
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  }
+}
