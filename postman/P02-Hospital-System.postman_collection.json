@@ -1,0 +1,1088 @@
+{
+  "info": {
+    "_postman_id": "hospital-patient-and-appointment-management-system",
+    "name": "Hospital Patient & Appointment Management System",
+    "description": "Comprehensive Postman API collection covering authentication, departments, doctors, availability, appointments, workflow, prescriptions, billing, notifications, and reports.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "doctorToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "patientToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "patient2Token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "departmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "doctorId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "patientId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "patient2Id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "appointmentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "completedApptId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "prescriptionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "billingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Token received', function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.token).to.exist;",
+                  "    pm.collectionVariables.set('adminToken', jsonData.data.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@hospital.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Doctor (Dr. Sharma)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Token received', function () {",
+                  "    pm.expect(jsonData.data.token).to.exist;",
+                  "    pm.collectionVariables.set('doctorToken', jsonData.data.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.sharma@hospital.com\",\n  \"password\": \"Doctor@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Patient 1 (John Doe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Token received', function () {",
+                  "    pm.expect(jsonData.data.token).to.exist;",
+                  "    pm.collectionVariables.set('patientToken', jsonData.data.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patient1@example.com\",\n  \"password\": \"Patient@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Login Patient 2 (Sarah Smith)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('patient2Token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patient2@example.com\",\n  \"password\": \"Patient@123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Register New Patient (Happy Path)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Walker\",\n  \"email\": \"alice." + Date.now() + "@example.com\",\n  \"password\": \"Patient@123\",\n  \"phone\": \"+91 9123456780\",\n  \"dob\": \"1998-04-12\",\n  \"gender\": \"Female\",\n  \"bloodGroup\": \"A+\",\n  \"medicalNotes\": \"No chronic conditions.\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Register - Validation Failure 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error code is VALIDATION_ERROR', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('VALIDATION_ERROR');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"A\",\n  \"email\": \"invalid-email-format\",\n  \"password\": \"short\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login - Invalid Credentials 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@hospital.com\",\n  \"password\": \"WrongPassword!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Get Current Profile (GET /api/auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Missing Token - 401 Unauthorized",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Departments",
+      "item": [
+        {
+          "name": "List Departments (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (jsonData.data && jsonData.data.length > 0) {",
+                  "    pm.collectionVariables.set('departmentId', jsonData.data[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/departments"
+          }
+        },
+        {
+          "name": "Get Department by ID (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/departments/{{departmentId}}"
+          }
+        },
+        {
+          "name": "Create Department (Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dermatology\",\n  \"description\": \"Skin care, allergy diagnostics, and dermatological procedures.\"\n}"
+            },
+            "url": "{{baseUrl}}/departments"
+          }
+        },
+        {
+          "name": "Create Department - 403 Forbidden (Patient Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403', function () { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unauthorized Dept\",\n  \"description\": \"Should fail with 403\"\n}"
+            },
+            "url": "{{baseUrl}}/departments"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Doctors & Availability",
+      "item": [
+        {
+          "name": "List Doctors (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (jsonData.data && jsonData.data.doctors && jsonData.data.doctors.length > 0) {",
+                  "    pm.collectionVariables.set('doctorId', jsonData.data.doctors[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/doctors"
+          }
+        },
+        {
+          "name": "Search Doctors by Specialization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/doctors?specialization=Cardiology"
+          }
+        },
+        {
+          "name": "Search Doctors by Department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/doctors?department=Neurology"
+          }
+        },
+        {
+          "name": "Get Doctor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/doctors/{{doctorId}}"
+          }
+        },
+        {
+          "name": "Update Availability Slots (Doctor/Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availabilitySlots\": [\n    { \"day\": \"Monday\", \"startTime\": \"09:00\", \"endTime\": \"13:00\" },\n    { \"day\": \"Monday\", \"startTime\": \"14:00\", \"endTime\": \"17:00\" },\n    { \"day\": \"Wednesday\", \"startTime\": \"09:00\", \"endTime\": \"13:00\" }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/doctors/{{doctorId}}/slots"
+          }
+        },
+        {
+          "name": "Overlapping Availability - 409 Conflict",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict', function () { pm.response.to.have.status(409); });",
+                  "pm.test('ErrorCode is OVERLAPPING_SLOTS', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('OVERLAPPING_SLOTS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availabilitySlots\": [\n    { \"day\": \"Monday\", \"startTime\": \"09:00\", \"endTime\": \"12:00\" },\n    { \"day\": \"Monday\", \"startTime\": \"11:00\", \"endTime\": \"14:00\" }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/doctors/{{doctorId}}/slots"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Appointments",
+      "item": [
+        {
+          "name": "Book Appointment (Patient)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('appointmentId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctorId\": \"{{doctorId}}\",\n  \"date\": \"2026-09-07\",\n  \"slot\": {\n    \"startTime\": \"11:00\",\n    \"endTime\": \"11:30\"\n  },\n  \"reason\": \"Routine cardiac consultation.\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments"
+          }
+        },
+        {
+          "name": "Double Booking Conflict - 409 Conflict",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Error code is APPOINTMENT_CONFLICT', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('APPOINTMENT_CONFLICT');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patient2Token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctorId\": \"{{doctorId}}\",\n  \"date\": \"2026-09-07\",\n  \"slot\": {\n    \"startTime\": \"11:15\",\n    \"endTime\": \"11:45\"\n  },\n  \"reason\": \"Trying to book overlapping time window with same doctor.\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments"
+          }
+        },
+        {
+          "name": "Slot Outside Doctor Availability - 400 Bad Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('ErrorCode is SLOT_NOT_AVAILABLE', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('SLOT_NOT_AVAILABLE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctorId\": \"{{doctorId}}\",\n  \"date\": \"2026-09-07\",\n  \"slot\": {\n    \"startTime\": \"03:00\",\n    \"endTime\": \"03:30\"\n  },\n  \"reason\": \"Invalid middle-of-night slot.\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments"
+          }
+        },
+        {
+          "name": "List Appointments (Role Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/appointments"
+          }
+        },
+        {
+          "name": "Get Appointment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/appointments/{{appointmentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Status Workflow",
+      "item": [
+        {
+          "name": "Transition 1: Booked -> Confirmed (Doctor/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Appointment is Confirmed', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.data.status).to.eql('Confirmed');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Confirmed\",\n  \"notes\": \"Appointment approved by doctor.\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments/{{appointmentId}}/status"
+          }
+        },
+        {
+          "name": "Transition 2: Confirmed -> Completed (Doctor/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Status is Completed', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.data.status).to.eql('Completed');",
+                  "    pm.collectionVariables.set('completedApptId', json.data._id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\",\n  \"notes\": \"Patient visit and physical examination completed.\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments/{{appointmentId}}/status"
+          }
+        },
+        {
+          "name": "Invalid Transition - Completed -> Booked (400 Rejected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () { pm.response.to.have.status(400); });",
+                  "pm.test('ErrorCode is INVALID_STATUS_TRANSITION', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('INVALID_STATUS_TRANSITION');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Booked\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments/{{appointmentId}}/status"
+          }
+        },
+        {
+          "name": "Forbidden Transition - Patient tries to mark Completed (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 or 403', function () {",
+                  "    pm.expect([400, 403]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Completed\"\n}"
+            },
+            "url": "{{baseUrl}}/appointments/{{appointmentId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Digital Prescriptions",
+      "item": [
+        {
+          "name": "Issue Prescription for Completed Appt (Doctor Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('prescriptionId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentId\": \"{{completedApptId}}\",\n  \"medicines\": [\n    {\n      \"name\": \"Metoprolol\",\n      \"dosage\": \"25mg\",\n      \"frequency\": \"Once daily\",\n      \"duration\": \"14 days\",\n      \"instructions\": \"With food in morning\"\n    }\n  ],\n  \"diagnosis\": \"Mild sinus tachycardia\",\n  \"notes\": \"Reduce caffeine intake, monitor resting heart rate.\"\n}"
+            },
+            "url": "{{baseUrl}}/prescriptions"
+          }
+        },
+        {
+          "name": "Issue Prescription - 403 Forbidden (Patient Role)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403', function () { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentId\": \"{{completedApptId}}\",\n  \"medicines\": [\n    {\n      \"name\": \"Dummy\",\n      \"dosage\": \"10mg\",\n      \"frequency\": \"Daily\",\n      \"duration\": \"5 days\"\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/prescriptions"
+          }
+        },
+        {
+          "name": "Duplicate Prescription on Same Appt - 409 Conflict",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentId\": \"{{completedApptId}}\",\n  \"medicines\": [\n    {\n      \"name\": \"Metoprolol\",\n      \"dosage\": \"25mg\",\n      \"frequency\": \"Once daily\",\n      \"duration\": \"14 days\"\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/prescriptions"
+          }
+        },
+        {
+          "name": "Get Prescription by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/prescriptions/{{prescriptionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Medical History & Profile",
+      "item": [
+        {
+          "name": "Get Own Patient Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (json.data && json.data.patient && json.data.patient._id) {",
+                  "    pm.collectionVariables.set('patientId', json.data.patient._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/patients/profile"
+          }
+        },
+        {
+          "name": "Update Patient Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medicalNotes\": \"Updated medical notes: Mild hypertension managed with diet and medication.\"\n}"
+            },
+            "url": "{{baseUrl}}/patients/profile"
+          }
+        },
+        {
+          "name": "Get Patient Medical History (Authorized)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/patients/{{patientId}}/history"
+          }
+        },
+        {
+          "name": "Ownership Check - Patient Views Another Patient's History (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403 Forbidden', function () { pm.response.to.have.status(403); });",
+                  "pm.test('ErrorCode is OWNERSHIP_VIOLATION', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.errorCode).to.eql('OWNERSHIP_VIOLATION');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patient2Token}}" }
+            ],
+            "url": "{{baseUrl}}/patients/{{patientId}}/history"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Billing",
+      "item": [
+        {
+          "name": "Get Patient Billing Records",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (json.data && json.data.length > 0) {",
+                  "    pm.collectionVariables.set('billingId', json.data[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/billing/patient/{{patientId}}"
+          }
+        },
+        {
+          "name": "Get Billing Details by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/billing/{{billingId}}"
+          }
+        },
+        {
+          "name": "Update Billing Payment Status (Admin Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentStatus\": \"Paid\",\n  \"paymentMethod\": \"UPI\"\n}"
+            },
+            "url": "{{baseUrl}}/billing/{{billingId}}"
+          }
+        },
+        {
+          "name": "Update Billing - 403 Forbidden (Patient Role)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403', function () { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentStatus\": \"Paid\"\n}"
+            },
+            "url": "{{baseUrl}}/billing/{{billingId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "if (json.data && json.data.notifications && json.data.notifications.length > 0) {",
+                  "    pm.collectionVariables.set('notificationId', json.data.notifications[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/notifications"
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/notifications/{{notificationId}}/read"
+          }
+        },
+        {
+          "name": "Mark All Notifications Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": "{{baseUrl}}/notifications/read-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Admin Reports",
+      "item": [
+        {
+          "name": "Appointment Statistics (Daily Aggregation)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/admin/reports/appointments?period=daily&days=30"
+          }
+        },
+        {
+          "name": "Appointment Statistics (Weekly Aggregation)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/admin/reports/appointments?period=weekly&days=60"
+          }
+        },
+        {
+          "name": "Department Load Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/admin/reports/departments?days=30"
+          }
+        },
+        {
+          "name": "Doctor Utilization Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": "{{baseUrl}}/admin/reports/doctors?days=30"
+          }
+        },
+        {
+          "name": "Admin Reports - 403 Forbidden (Doctor Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403 Forbidden', function () { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+            ],
+            "url": "{{baseUrl}}/admin/reports/appointments"
+          }
+        }
+      ]
+    }
+  ]
+}
